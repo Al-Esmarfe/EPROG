@@ -122,7 +122,7 @@ class CourseTree extends StatelessWidget {
                   image: fase['imagem'],
                   color: _parseColor(fase['cor']),
                   crown: fase['crown'],
-                  percent: fase['percent'],
+                  percent: (fase['percent'] as num?)?.toDouble(),
                 ),
                 const SizedBox(height: 10),
               ]

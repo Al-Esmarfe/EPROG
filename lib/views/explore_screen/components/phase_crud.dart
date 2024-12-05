@@ -12,7 +12,7 @@ class PhaseCrud extends StatefulWidget {
 
 class _PhaseCrudState extends State<PhaseCrud> {
   String? _phaseId;
-  List<DocumentSnapshot> _phases = []; // Armazena as fases em ordem
+  List<DocumentSnapshot> _phases = [];
 
   void _openPhaseForm(
       {String? phaseId, String? name, Color? color, String? imagePath}) {
@@ -83,10 +83,8 @@ class _PhaseCrudState extends State<PhaseCrud> {
           await doc.reference.delete();
         }
 
-        // Chama o método para atualizar as fases na tela
         _fetchPhases();
 
-        // Exibe o SnackBar de sucesso
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fase excluída com sucesso!'),
@@ -145,40 +143,40 @@ class _PhaseCrudState extends State<PhaseCrud> {
         title: const Text('Gerenciar Fases'),
         automaticallyImplyLeading: false,
       ),
-      body: ReorderableListView(
-        children: [
-          for (int index = 0; index < _phases.length; index++)
-            ListTile(
-              key: ValueKey(_phases[index].id),
-              title: Text(_phases[index].get('nome') ?? 'Nome não disponível'),
-              subtitle: Text('Prioridade: ${index + 1}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => _openPhaseForm(
-                      phaseId: _phases[index].id,
-                      name: _phases[index].get('nome'),
-                      color: Color(
-                          int.parse(_phases[index].get('cor'), radix: 16)),
-                      imagePath: _phases[index].get('imagem'),
-                    ),
+      body: ReorderableListView.builder(
+        itemBuilder: (context, index) {
+          return ListTile(
+            key: ValueKey(_phases[index].id),
+            title: Text(_phases[index].get('nome') ?? 'Nome não disponível'),
+            subtitle: Text('Prioridade: ${index + 1}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _openPhaseForm(
+                    phaseId: _phases[index].id,
+                    name: _phases[index].get('nome'),
+                    color: Color(
+                        int.parse(_phases[index].get('cor'), radix: 16)),
+                    imagePath: _phases[index].get('imagem'),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => _deletePhase(_phases[index].id),
-                  ),
-                ],
-              ),
-              onTap: () {
-                setState(() {
-                  _phaseId = _phases[index].id;
-                });
-                _openExerciseLinker();
-              },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => _deletePhase(_phases[index].id),
+                ),
+              ],
             ),
-        ],
+            onTap: () {
+              setState(() {
+                _phaseId = _phases[index].id;
+              });
+              _openExerciseLinker();
+            },
+          );
+        },
+        itemCount: _phases.length,
         onReorder: (oldIndex, newIndex) {
           setState(() {
             if (newIndex > oldIndex) newIndex -= 1;
@@ -187,6 +185,7 @@ class _PhaseCrudState extends State<PhaseCrud> {
           });
           _updatePriorities();
         },
+        physics: const AlwaysScrollableScrollPhysics(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openPhaseForm(),

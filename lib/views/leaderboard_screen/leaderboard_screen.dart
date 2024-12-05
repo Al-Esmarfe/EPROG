@@ -178,7 +178,7 @@ class LeaderboardScreen extends StatelessWidget {
 
   Widget _avatar(String? image) {
     return CircleAvatar(
-      backgroundImage: image != null ? NetworkImage(image) : null,
+      backgroundImage: image != null ? AssetImage(image) : null,
       radius: 22,
       child: image == null ? const Icon(Icons.account_circle, size: 30) : null,
     );

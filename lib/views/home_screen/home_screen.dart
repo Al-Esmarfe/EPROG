@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (isAdmin) const PhaseAppBar() else const StatAppBar(),
       if (isAdmin) const ExerciseAppBar(),
       const ProfileAppBar(),
-      LeaderboardAppBar(userRank: userRank ?? 0, isAdminId: isAdmin),
+      LeaderboardAppBar(),
     ];
 
     return Scaffold(

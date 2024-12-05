@@ -165,4 +165,18 @@ class _TextLessonState extends State<TextLesson> {
     _controller.dispose();
     super.dispose();
   }
+
+  @override
+  void didUpdateWidget(TextLesson oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.idExercicio != widget.idExercicio) {
+      _controller.clear();
+      setState(() {
+        isCorrect = false;
+        isLoading = true;
+      });
+      fetchAnswer();
+    }
+  }
 }

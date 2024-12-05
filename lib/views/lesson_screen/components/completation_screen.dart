@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tcc_projeto/views/course_screen/course_tree.dart';
 
 class CompletionScreen extends StatelessWidget {
   final String idFase;
@@ -24,7 +23,9 @@ class CompletionScreen extends StatelessWidget {
 
       final docSnapshot = await docRef.get();
       if (docSnapshot.exists) {
-        return docSnapshot.data() ?? {};
+        final data = docSnapshot.data() ?? {};
+        data['percent'] = (data['percent'] ?? 0.0).toDouble();
+        return data;
       }
     } catch (e) {
       print('Erro ao buscar dados da fase: $e');
@@ -42,7 +43,8 @@ class CompletionScreen extends StatelessWidget {
       if (docSnapshot.exists) {
         int currentTempoDeEstudo = docSnapshot.data()?['tempo_de_estudo'] ?? 0;
         int currentPontos = docSnapshot.data()?['pontos'] ?? 0;
-        double currentPercent = docSnapshot.data()?['percent'] ?? 0;
+        double currentPercent =
+            (docSnapshot.data()?['percent'] ?? 0.0).toDouble();
         int currentCrown = docSnapshot.data()?['crown'] ?? 0;
 
         double newPercent = currentPercent + 0.20;
@@ -117,8 +119,10 @@ class CompletionScreen extends StatelessWidget {
           }
 
           final data = snapshot.data ?? {};
-          double currentPercent = data['percent'] ?? 0.0;
+          double currentPercent = (data['percent'] ?? 0.0).toDouble();
           int timesRemaining = (5 - (currentPercent / 0.20).ceil()).clamp(0, 5);
+
+          print('timesRemaining: ${timesRemaining - 1} -- $timesRemaining');
 
           return Center(
             child: Column(
@@ -139,10 +143,16 @@ class CompletionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 if (timesRemaining > 0)
-                  Text(
-                    'Faltam $timesRemaining vez(es) para ganhar uma coroa.',
-                    style: const TextStyle(fontSize: 18, color: Colors.grey),
-                  )
+                  if (timesRemaining - 1 == 0)
+                    Text(
+                      'Você ganhou uma estrelha',
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    )
+                  else
+                    Text(
+                      'Faltam $timesRemaining vezes para ganhar uma coroa.',
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    )
                 else
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

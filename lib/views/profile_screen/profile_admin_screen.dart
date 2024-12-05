@@ -31,12 +31,12 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
         if (userDoc.exists) {
           setState(() {
             adminData = userDoc.data() as Map<String, dynamic>;
-            isLoading = false;
           });
         }
       }
     } catch (e) {
       print("Erro ao buscar dados do administrador: $e");
+    } finally {
       setState(() {
         isLoading = false;
       });
@@ -56,8 +56,10 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(adminData?['foto_url'] ??
-                          'https://www.example.com/default-avatar.png'),
+                      backgroundImage: adminData?['foto_url'] != null
+                          ? AssetImage(adminData!['foto_url']) as ImageProvider
+                          : const AssetImage(
+                              'assets/images/default-avatar.png'),
                     ),
                     const SizedBox(height: 10),
                     Text(
